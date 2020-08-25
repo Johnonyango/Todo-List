@@ -12,6 +12,6 @@
 <footer class="footer font-small black">
     <!-- Copyright -->
   <div class="footer-copyright text-center py-3" style="color: white">© 2019 Copyright:
-        <a href="https://www.javaguides.net/" > <strong> Java Guides </strong></a>
+        <a href="https://www.javaguides.net/" ><strong> Java Guides </strong></a>
       </div>
 </footer>
