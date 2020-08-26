@@ -1,6 +1,7 @@
 package com.john.JdbcUtill;
 
 import java.sql.*;
+import java.time.LocalDate;
 
 public class DbConnection implements DbConnectionI {
     private String username;
@@ -9,7 +10,7 @@ public class DbConnection implements DbConnectionI {
     private Connection connection;
 
     public DbConnection() throws SQLException, ClassNotFoundException {
-        this.url = "jdbc:mysql://localhost:6660/league?useSSL=false";
+        this.url = "jdbc:mysql://localhost:6660/organization?useSSL=false";
         this.username = "root";
         this.password = "";
         this.connect();
@@ -55,5 +56,12 @@ public class DbConnection implements DbConnectionI {
     @Override
     public void close() throws SQLException {
         this.connection.close();
+    }
+    public static Date getSQLDate(LocalDate date) {
+        return java.sql.Date.valueOf(date);
+    }
+
+    public static LocalDate getUtilDate(Date sqlDate) {
+        return sqlDate.toLocalDate();
     }
 }
