@@ -15,10 +15,11 @@
         <jsp:include page="header.jsp"></jsp:include>
         <div class="container col-md-8 col-md-offset-3" style="overflow: auto">
             <h1>Login Form</h1>
-            <form action="<%=request.getContextPath()%>/login" method="post">
+            <form action="login" method="post">
 
                 <div class="form-group">
-                    <label for="uname">User Name:</label> <input type="text" class="form-control" id="username" placeholder="User Name" name="username" required>
+                    <label for="uname">User Name:</label>
+                     <input type="text" class="form-control" id="username" placeholder="User Name" name="username" required>
                 </div>
 
                 <div class="form-group">
@@ -29,7 +30,6 @@
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
         </div>
-        <jsp:include page="footer.jsp"></jsp:include>
     </body>
 
     </html>

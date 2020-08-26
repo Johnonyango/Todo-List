@@ -3,6 +3,7 @@ package com.john.DAO.todo;
 import com.john.JdbcUtill.DbConnection;
 import com.john.models.Todo;
 
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,6 +14,8 @@ import java.util.List;
 
 public class TodoDb implements TodoDbI {
     DbConnection dbConnection;
+    PreparedStatement st;
+
     private static final String INSERT_TODOS_SQL = "INSERT INTO todos" +
             "  (title, username, description, target_date,  is_done) VALUES " + " (?, ?, ?, ?, ?);";
 
@@ -21,27 +24,29 @@ public class TodoDb implements TodoDbI {
     private static final String DELETE_TODO_BY_ID = "delete from todos where id = ?;";
     private static final String UPDATE_TODO = "update todos set title = ?, username= ?, description =?, target_date =?, is_done = ? where id = ?;";
 
-    public TodoDb() {}
+    public TodoDb(DbConnection dbConnection) {
+        this.dbConnection = dbConnection;
+    }
 
     @Override
-    public void insertTodo(Todo todo) throws SQLException {
+    public void insertTodo(Todo todo) {
         System.out.println(INSERT_TODOS_SQL);
 
-        try{
-        PreparedStatement st = this
-                .dbConnection
-                .getConnection()
-                .prepareStatement(INSERT_TODOS_SQL);
-        st.setString(1, todo.getTitle());
-            st.setString(2, todo.getUsername());
-            st.setString(3, todo.getDescription());
-            st.setDate(4, dbConnection.getSQLDate(todo.getTargetDate()));
-            st.setBoolean(5, todo.getStatus());
-            System.out.println(st);
-            st.executeUpdate();
-        } catch (SQLException exception) {
-            exception.printStackTrace();
+        try {
+                st = dbConnection.getConnection().prepareStatement(INSERT_TODOS_SQL);
+                st.setString(1, todo.getTitle());
+                st.setString(2, todo.getUsername());
+                st.setString(3, todo.getDescription());
+                st.setDate(4, dbConnection.getSQLDate(todo.getTargetDate()));
+                st.setBoolean(5, todo.getStatus());
+
+                System.out.println(st);
+                st.executeUpdate();
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
         }
+
     }
 
     @Override
@@ -52,10 +57,8 @@ public class TodoDb implements TodoDbI {
         PreparedStatement st = connection.prepareStatement(SELECT_TODO_BY_ID);
             st.setLong(1, todoId);
             System.out.println(st);
-            // Step 3: Execute the query or update query
             ResultSet rs = st.executeQuery();
 
-            // Step 4: Process the ResultSet object.
             while (rs.next()) {
                 long id = rs.getLong("id");
                 String title = rs.getString("title");
@@ -73,11 +76,9 @@ public class TodoDb implements TodoDbI {
 
     @Override
     public List< Todo > selectAllTodos() {
-
-        // using try-with-resources to avoid closing resources (boiler plate code)
         List < Todo > todos = new ArrayList< >();
 
-        // Step 1: Establishing a Connection
+        //  Establishing a Connection
         try {
             Connection connection = dbConnection.getConnection();
             PreparedStatement st = connection.prepareStatement(SELECT_ALL_TODOS);

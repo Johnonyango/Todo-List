@@ -1,6 +1,7 @@
 package com.john.servlets;
 
 import com.john.DAO.LoginDb;
+import com.john.JdbcUtill.DbConnection;
 import com.john.javaBean.LoginBean;
 
 import javax.servlet.RequestDispatcher;
@@ -14,16 +15,17 @@ import java.io.IOException;
 
 @WebServlet("/login")
 public class LoginController extends HttpServlet {
-//    private static final long serialVersionUID = 1 L;
     private LoginDb loginDb;
+DbConnection dbConnection;
 
     public void init() {
-        loginDb = new LoginDb();
+        dbConnection = (DbConnection) getServletContext().getAttribute("dbConnection");
+        loginDb = new LoginDb(dbConnection);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.sendRedirect("login/login.jsp");
+        response.sendRedirect("login.jsp");
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -40,16 +42,16 @@ public class LoginController extends HttpServlet {
 
         try {
             if (loginDb.validate(loginBean)) {
-                RequestDispatcher dispatcher = request.getRequestDispatcher("todo/todo-list.jsp");
-                dispatcher.forward(request, response);
-            } else {
                 HttpSession session = request.getSession();
-                // session.setAttribute("user", username);
-                // response.sendRedirect("login.jsp");
+                session.setAttribute("user", username);
+                RequestDispatcher dispatcher = request.getRequestDispatcher("list");
+                dispatcher.forward(request, response);
+            return;
             }
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
+        response.sendRedirect("login.jsp");
 
     }
 }

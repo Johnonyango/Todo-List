@@ -1,9 +1,10 @@
+<%@ page isELIgnored = "false" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
  pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <html>
 <head>
-<title>User Management Application</title>
+<title>To do list Application</title>
 
 <link rel="stylesheet"
  href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
@@ -15,9 +16,9 @@
 <body>
  <header>
   <nav class="navbar navbar-expand-md navbar-dark"
-   style="background-color: tomato">
+   style="background-color: black">
    <div>
-    <a href="https://www.javaguides.net" class="navbar-brand"> Todo
+    <a href="#" class="navbar-brand"> Todo
      App</a>
    </div>
 
@@ -41,7 +42,7 @@
    <hr>
    <div class="container text-left">
 
-    <a href="<%=request.getContextPath()%>/new"
+    <a href="todo-form.jsp"
      class="btn btn-success">Add Todo</a>
    </div>
    <br>
@@ -78,6 +79,6 @@
   </div>
  </div>
 
- <jsp:include page="../common/footer.jsp"></jsp:include>
+ <jsp:include page="footer.jsp"></jsp:include>
 </body>
 </html>

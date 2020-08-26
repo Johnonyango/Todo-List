@@ -2,6 +2,7 @@ package com.john.servlets;
 
 import com.john.DAO.todo.TodoDb;
 import com.john.DAO.todo.TodoDbI;
+import com.john.JdbcUtill.DbConnection;
 import com.john.models.Todo;
 
 import javax.servlet.RequestDispatcher;
@@ -13,19 +14,26 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @WebServlet("/")
 public class TodoController extends HttpServlet {
+    DbConnection dbConnection;
 //    private static final long serialVersionUID = 1 L;
     private TodoDb todoDb;
 
     public void init() {
-        todoDb = new TodoDb();
+        dbConnection = (DbConnection) getServletContext().getAttribute("dbConnection");
+        todoDb = new TodoDb(dbConnection);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        if (request.getSession().getAttribute("user")==null){
+            response.sendRedirect("login.jsp");
+            return;
+        }
         doGet(request, response);
     }
 
@@ -67,13 +75,13 @@ public class TodoController extends HttpServlet {
             throws SQLException, IOException, ServletException {
         List<Todo> listTodo = todoDb.selectAllTodos();
         request.setAttribute("listTodo", listTodo);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("todo/todo-list.jsp");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("todo-list.jsp");
         dispatcher.forward(request, response);
     }
 
     private void showNewForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        RequestDispatcher dispatcher = request.getRequestDispatcher("todo/todo-form.jsp");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("todo-form.jsp");
         dispatcher.forward(request, response);
     }
 
@@ -81,7 +89,7 @@ public class TodoController extends HttpServlet {
             throws SQLException, ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
         Todo existingTodo = todoDb.selectTodo(id);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("todo/todo-form.jsp");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("todo-form.jsp");
         request.setAttribute("todo", existingTodo);
         dispatcher.forward(request, response);
 
@@ -90,14 +98,15 @@ public class TodoController extends HttpServlet {
     private void insertTodo(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
 
         String title = request.getParameter("title");
-        String username = request.getParameter("username");
+        String username = (String) request.getSession().getAttribute("user");
         String description = request.getParameter("description");
 
-        /*DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-mm-dd");
-        LocalDate targetDate = LocalDate.parse(request.getParameter("targetDate"),df);*/
+//        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-mm-dd");
+//    LocalDate targetDate = LocalDate.parse(request.getParameter("targetDate"),df);
 
         boolean isDone = Boolean.valueOf(request.getParameter("isDone"));
-        Todo newTodo = new Todo(title, username, description, LocalDate.now(), isDone);
+//        String date = request.getParameter("targetDate");
+        Todo newTodo = new Todo(title, username, description,LocalDate.now(),isDone);
         todoDb.insertTodo(newTodo);
         response.sendRedirect("list");
     }
@@ -106,7 +115,7 @@ public class TodoController extends HttpServlet {
         int id = Integer.parseInt(request.getParameter("id"));
 
         String title = request.getParameter("title");
-        String username = request.getParameter("username");
+        String username = (String) request.getSession().getAttribute("user");
         String description = request.getParameter("description");
         //DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-mm-dd");
         LocalDate targetDate = LocalDate.parse(request.getParameter("targetDate"));
