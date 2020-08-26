@@ -8,7 +8,7 @@ import java.sql.SQLException;
 
 public class UserDb {
     DbConnection dbConnection;
-    public int registerEmployee(User employee) throws ClassNotFoundException {
+    public int registerEmployee(User user) throws ClassNotFoundException {
         String INSERT_USERS_SQL = "INSERT INTO users" +
                 "  (first_name, last_name, username, password) VALUES " +
                 " (?, ?, ?, ?);";
@@ -19,10 +19,10 @@ public class UserDb {
                     .dbConnection
                     .getConnection()
                     .prepareStatement(INSERT_USERS_SQL);
-            st.setString(1, employee.getFirstName());
-            st.setString(2, employee.getLastName());
-            st.setString(3, employee.getUsername());
-            st.setString(4, employee.getPassword());
+            st.setString(1, user.getFirstName());
+            st.setString(2, user.getLastName());
+            st.setString(3, user.getUsername());
+            st.setString(4, user.getPassword());
 
             System.out.println(st);
             result = st.executeUpdate();
